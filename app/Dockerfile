@@ -24,4 +24,4 @@ COPY . .
 
 EXPOSE 8000
 
-#ENTRYPOINT ["uwsgi", "--strict", "--ini", "uwsgi.ini"]
+CMD python manage.py migrate && python manage.py collectstatic --noinput && uwsgi --strict --ini uwsgi.ini
