@@ -1,16 +1,28 @@
 version: '3'
 services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5446:5432"
+    env_file:
+      - ./.env
+    restart: always
+
   service:
     build: ./app
     expose:
       - "8000"
+    env_file:
+      - ./.env
 
   nginx:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./configs:/etc/nginx/conf.d:ro
-      - ./data:/data/:ro
+      - ./app/static:/data/static:ro
     depends_on:
       - service
     ports:
