@@ -1,6 +1,6 @@
 version: '3'
 services:
-  postgres:
+  db:
     image: postgres
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
@@ -12,6 +12,8 @@ services:
 
   service:
     build: ./app
+    command: sh -c "python manage.py migrate &&
+                    uwsgi --strict --ini uwsgi.ini"
     expose:
       - "8000"
     env_file:

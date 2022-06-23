@@ -1,6 +1,8 @@
 Django==3.2
 django-debug-toolbar==3.4.0
+django-extensions==3.1.5
 django-split-settings==1.1.0
 flake8==4.0.0
 psycopg2-binary==2.9.3
 python-dotenv==0.20.0
+uWSGI==2.0.20
