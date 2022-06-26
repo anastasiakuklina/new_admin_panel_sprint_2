@@ -17,11 +17,16 @@ RUN  mkdir -p /var/www/static/ \
      && mkdir -p /var/www/media/ \
      && mkdir -p /opt/app/static/ \
      && mkdir -p /opt/app/media/ \
+     && apt-get update \
+     && apt install -y netcat \
      && pip install --upgrade pip \
      && pip install -r requirements.txt
 
 COPY . .
+COPY ./django_run.sh /
+
+RUN chmod +x /django_run.sh
 
 EXPOSE 8000
 
-CMD python manage.py migrate && python manage.py collectstatic --noinput && uwsgi --strict --ini uwsgi.ini
+ENTRYPOINT ["/django_run.sh"]

@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.list import BaseListView
 
-from movies.models import Filmwork
+from ...models import Filmwork, PersonFilmwork
 
 
 class MovieApiMixin:
@@ -14,11 +14,12 @@ class MovieApiMixin:
         queryset = self.model.objects.values('id', 'title', 'description', 'creation_date', 'rating', 'type').annotate(
             genres=ArrayAgg('genres__name', distinct=True))
 
-        queryset = queryset.annotate(  # TODO refactoring
-            actors=ArrayAgg('persons__full_name', filter=Q(personfilmwork__role='actor'), distinct=True),
-            directors=ArrayAgg('persons__full_name', filter=Q(personfilmwork__role='director'), distinct=True),
-            writers=ArrayAgg('persons__full_name', filter=Q(personfilmwork__role='writer'), distinct=True),
-        )
+        for person_type in PersonFilmwork.PersonRoleTypes:
+
+            queryset = queryset.annotate(
+                **{person_type + 's': ArrayAgg('persons__full_name', filter=Q(personfilmwork__role=person_type),
+                                               distinct=True)}
+            )
         return queryset
 
     def render_to_response(self, context, *response_kwargs):
